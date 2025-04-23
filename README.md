@@ -16,3 +16,8 @@ With any GeoJSON AOI...
 ### Bathymetry Processing
 1. Data Access. Configure NASA SlideRule request parameters at the top of `1_get_is2.py` and run to download ATL03 data. This may take several minutes depending on your AOI size and internet connection. 
 2. Bathymetry Classification. Set up `config.yaml` as needed. To classify bathymetry, run `2_classify_is2.py`.
+
+### Outputs
+- bathymetry.gpkg: Bathymetry classified photon-rate data. Refraction corrected elevations (referenced to EGM08) are stored in the `z_ph_refr` field. Other key data such as time of acquistion, classification confidence (0-1), and water mask values are stored alongside geolocation / height data. 
+
+![GPKG Outputs](img/output_fields.png)
