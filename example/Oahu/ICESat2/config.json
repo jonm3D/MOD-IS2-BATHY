@@ -1,0 +1,18 @@
+{
+  "aoi": "local/Oahu/Oahu.geojson",
+  "water_mask": "local/Oahu/DSWx/OPERA_L3_DSWX-HLS_V1_1.0-OAHU_merged_clipped.tif",
+  "output_dir": "local/Oahu/ICESat2",
+  "request_name": "Oahu",
+  "aoi_title": "Oahu",
+  "start_date": "2023-01-01",
+  "end_date": "2024-01-01",
+  "min_confidence": 0,
+  "max_samples": 100000,
+  "chunk_size": 5,
+  "buffer_percent": 0,
+  "max_workers": 8,
+  "min_elevation": -100,
+  "max_elevation": 100,
+  "gebco_dir": "/Volumes/T7/gebco_2024_sub_ice_topo_geotiff",
+  "processing_timestamp": "20250423_084041"
+}
