@@ -71,7 +71,6 @@ def process_profile(data, **config):
         data_classification = pd.Series(0, index=data.index, dtype=int)
         data_confidence = pd.Series(0, index=data.index, dtype=float)
         
-        print(data.solar_elevation.mean())
         if data.solar_elevation.mean() < 0:
             nighttime = True
         else:

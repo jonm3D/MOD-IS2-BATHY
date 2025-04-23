@@ -2,8 +2,8 @@
 request_name: "Oahu"  # name of the request
 
 # Input/Output Settings
-input_file: "local/Oahu/ICESat2/Oahu_icesat2_atl03.parquet" # Can be set to a default input file path
-output_dir: "local/Oahu/run_mod_output"  # Can be set to a default output directory path
+input_file: "example/Oahu/ICESat2/Oahu_icesat2_atl03.parquet" # Can be set to a default input file path
+output_dir: "example/Oahu/classification_outputs"  # Can be set to a default output directory path
 
 # Processing Options
 make_plots: 1  # for html visual output
