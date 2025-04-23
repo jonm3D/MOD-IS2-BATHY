@@ -1,0 +1,34 @@
+name: mod2
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - pandas
+  - matplotlib
+  - scipy
+  - geopandas
+  - scikit-learn
+  - fast-histogram
+  - h5py
+  - yaml
+  - pathos
+  - tqdm
+  - kdepy
+  - scikit-image # For otsu threshold, remove if not needed
+  - ipykernel  # Optional for notebooks/VScode
+  - numba  # Optional
+  - earthengine-api  # Optional for NDWI land filtering
+  - geemap  # Optional for NDWI land filtering
+  - sliderule  # Optional for data loading from non-h5 files
+  - pip  # Ensure pip is available
+  - seaborn # Optional for testing visualizations
+  - bokeh
+  - xyzservices
+  - ipympl
+  - rasterio
+  - rioxarray
+  - dask
+  - contextily
+  - pip:
+      - line-profiler  # Install using pip

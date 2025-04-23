@@ -1,0 +1,45 @@
+# Request Configuration
+request_name: "Yap_Channel"  # name of the request
+
+# Input/Output Settings
+input_file: "test_data/Yap_Channel_icesat2_atl03.parquet"  # Can be set to a default input file path
+output_dir: null  # Can be set to a default output directory path
+
+# Processing Options
+make_plots: 1  # for html visual output
+debug: false  # Enables plots for surface and non-surface processing (slow)
+serial: false  # Run processing in serial mode (helpful for debugging)
+n_nodes: 6  # for parallel processing
+
+# Filtering Options
+rgt: null  # Process only profiles with specific reference ground track (null to run all)
+cc: null  # Process only profiles with specific ICESat-2 cycle (null to run all)
+spot: null # Process only profiles with specific ICESat-2 spot (null to run all)
+profile_limit: null  # Limit of X number of profiles to process (null to run all)
+
+################################################
+# Along-track Binning Parameters
+max_gap_bins_m: 100  # Maximum gap allowed within an along-track bin
+
+## Surface Binning
+overlap_surface: 0.5 # Overlap between neighboring bins (as fraction of bin size)
+method_surface_bins: "n"  # ['x' or 'n']
+n_ph_surface_bins: 10000 # only used if method = 'n'
+x_m_surface_bins: 100 # only used if method = 'x'
+
+## Non-Surface (Atmo+Bathy) Binning
+overlap_nonsurf: 0.9
+method_nonsurf_bins: "n"  # 'x' or 'n'
+n_ph_nonsurf_bins: 100
+x_m_nonsurf_bins: 50
+
+################################################
+# Modeling Parameters
+## Surface Processing
+surf_sigma_cutoff: 5
+min_data_surface: 50  # Minimum number of points required for surface finding
+kde_surf_method: 'isj'
+
+## Non-surface Processing
+min_data_nonsurface: 25  # Minimum number of points required for subsurface finding
+bathy_snr_min: 3  # minimum auc relative to atmospheric noise
