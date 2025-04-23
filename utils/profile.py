@@ -5,8 +5,8 @@ from pathos.multiprocessing import ProcessPool
 from utils.n_chunk import n_chunk, mask_n_chunk
 from utils.x_chunk import x_chunk
 from utils.refraction import correction
-from utils.surface_simple import simple_surface_model
-from utils.nonsurface_processing import process_nonsurface_data
+from utils.surface_processing import surface_model
+from utils.bathy_processing import process_nonsurface_data
 import warnings
 import logging
 import matplotlib.pyplot as plt
@@ -108,7 +108,7 @@ def process_profile(data, **config):
             }        
 
         def process_chunk(chunk):
-            return simple_surface_model(
+            return surface_model(
                 chunk.values, 
                 grid_points=kde_surf_grid_points, 
                 kde_method=kde_surf_method,

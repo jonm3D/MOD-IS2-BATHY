@@ -25,7 +25,7 @@ def is_uniform(data, alpha=0.05):
     # Return True if we fail to reject the null hypothesis (p-value > alpha)
     return p_value > alpha
 
-def simple_surface_model(chunk, grid_points=1000, kde_method='silverman', min_data_points=50, debug=False, debug_dir=None):
+def surface_model(chunk, grid_points=1000, kde_method='silverman', min_data_points=50, debug=False, debug_dir=None):
     """
     Process a chunk of data to model the water surface using KDE.
     
