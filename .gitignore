@@ -1,13 +1,5 @@
-data/*
-purgatory/*
-sample_data/*
-output/*
+local/*
 *.parquet
-instrument_response/*
-testing
-validation/*
-*.npy
-test_data/*
 
 # MacOS
 .DS_Store
@@ -180,4 +172,3 @@ cython_debug/
 
 
 .vscode/*
-ignore/*

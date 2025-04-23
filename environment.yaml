@@ -1,4 +1,4 @@
-name: mod2
+name: mod
 channels:
   - conda-forge
 dependencies:

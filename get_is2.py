@@ -24,17 +24,17 @@ from utils.oo import sliderule_data_loader
 # Configuration for all parameters
 CONFIG = {
     # Required paths
-    "aoi": "test_data/aois/yap_side_channel.geojson",  # Path to the AOI geojson file
-    "water_mask": "test_data/water_masks/yap.tif",  # Path to the water mask GeoTIFF
-    "output_dir": "Yap_IS2",  # Directory to store output files
+    "aoi": "local/Oahu/Oahu.geojson",  # Path to the AOI geojson file
+    "water_mask": "local/Oahu/DSWx/OPERA_L3_DSWX-HLS_V1_1.0-OAHU_merged_clipped.tif",  # Path to the water mask GeoTIFF
+    "output_dir": "local/Oahu/ICESat2",  # Directory to store output files
     
     # Optional parameters
     "request_name": None,  # Name for this request (defaults to AOI filename if not provided)
     "aoi_title": None,  # Title string for the AOI (default: same as request name)
     
     # ICESat-2 query parameters
-    "start_date": "2019-09-01",
-    "end_date": "2025-01-01",
+    "start_date": "2023-01-01", # ICESat-2 launch : Sept 2018
+    "end_date": "2024-01-01",
     "min_confidence": 0,  # minimum signal_conf value
     "max_samples": int(1e5),  # max points to show in overhead view
     
@@ -200,7 +200,7 @@ def process_icesat2_data(run_timestamp):
         os.makedirs(request_dir)
     
     # Create a timestamped processing directory
-    processing_dir = os.path.join(request_dir, f"processing_{run_timestamp}")
+    processing_dir = os.path.join(request_dir, f"{CONFIG["request_name"]}_{run_timestamp}")
     if not os.path.exists(processing_dir):
         os.makedirs(processing_dir)
     
@@ -254,11 +254,11 @@ def process_icesat2_data(run_timestamp):
     aoi.geometry = [aoi_bbox]
     
     # Make sure we're in UTM, then buffer by specified amount
-    aoi = aoi.to_crs(aoi.estimate_utm_crs())
-    aoi = aoi.buffer(CONFIG["chunk_size"] * 1000 * (1 + CONFIG["buffer_percent"]), join_style=2)
+    # aoi = aoi.to_crs(aoi.estimate_utm_crs())
+    # aoi = aoi.buffer(CONFIG["chunk_size"] * 1000 * (1 + CONFIG["buffer_percent"]), join_style=2)
     
     # Convert back to WGS84
-    aoi = aoi.to_crs(4326)
+    # aoi = aoi.to_crs(4326)
     
     # Create chunks of the AOI
     aoi_chunks = chunk_polygon(aoi, chunk_size_km=CONFIG["chunk_size"], buffer_percent=CONFIG["buffer_percent"])
@@ -357,6 +357,9 @@ def process_icesat2_data(run_timestamp):
         gdf = pd.concat(gdf_parts)
         print(f"Total data points after merging all chunks: {len(gdf)}")
         
+        # Clip to only data within the aoi
+        gdf = gpd.clip(gdf, aoi.to_crs(gdf.crs))
+
         # Remove duplicate points from overlapping chunks if needed
         if CONFIG["buffer_percent"] > 0:
             print("Removing potential duplicate points from chunk overlaps...")
@@ -399,8 +402,8 @@ def process_icesat2_data(run_timestamp):
         water_mask_samples = water_mask.sel(x=x_sample_points, y=y_sample_points, method='nearest').values.flatten().astype(bool)
         gdf['water_mask'] = water_mask_samples
         
-        # Any nans (outside bounds) should be assigned as water
-        gdf.water_mask = gdf.water_mask.fillna(True)
+        # Any nans (outside bounds) should be assigned as land
+        gdf.water_mask = gdf.water_mask.fillna(False)
         
         # Print water percentage
         water_pct = gdf.water_mask.sum() / len(gdf) * 100
@@ -411,7 +414,14 @@ def process_icesat2_data(run_timestamp):
     
     # Save the final dataset with auxiliary data
     gdf.to_parquet(output_parquet_path)
-    print(f"Saved final dataset to: {output_parquet_path}")
+    # print(f"Saved final dataset to: {output_parquet_path}")
+
+    # Save to gpkg for GIS compatibility next to parquet
+    gpkg_path = os.path.splitext(output_parquet_path)[0] + ".gpkg"
+    gdf.to_file(gpkg_path, driver="GPKG")
+
+    print(f"Final dataset saved to: {output_parquet_path}/.gpkg")
+    
     
     return output_parquet_path
 

@@ -327,11 +327,11 @@ def create_bathymetry_map(output_dir):
             logger.error(f"Failed to add basemap: {str(e)}")
             
         # Set title and layout
-        plt.title('ICESat-2 Bathymetry Points')
+        plt.title('ICESat-2 Bathymetry')
         plt.tight_layout()
         
         # Save as static image
-        png_path = os.path.join(output_dir, "bathymetry_map.png")
+        png_path = os.path.join(output_dir, "bathymetry_tracks.png")
         plt.savefig(png_path, dpi=300, bbox_inches='tight')
         logger.info(f"Map image saved to {png_path}")
             

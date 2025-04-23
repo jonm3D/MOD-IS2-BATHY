@@ -110,11 +110,12 @@ def custom_kde(data, method='silverman', grid_points=1000, grid_min=None, grid_m
     # if len aug data < 50, sample from original data until n=50
     if len(augmented_data) < 50:
         # Sample from original data
-        n_needed = 50 - len(augmented_data)
+        n_needed = 75 - len(augmented_data)
         if n_needed > 0:
             # Sample with replacement
             sampled_data = np.random.choice(data, size=n_needed, replace=True)
-            augmented_data = np.concatenate([augmented_data, sampled_data])
+            sampled_data_noise = np.random.normal(loc=0, scale=0.1, size=n_needed)
+            augmented_data = np.concatenate([augmented_data, sampled_data + sampled_data_noise])
     
     # Check if method is a numeric bandwidth value
     if isinstance(method, (int, float)):
@@ -137,7 +138,6 @@ def custom_kde(data, method='silverman', grid_points=1000, grid_min=None, grid_m
         elif method == 'isj':
             # Improved Sheather-Jones method
             if len(augmented_data) >= 50:
-
                 try:
                     from KDEpy import FFTKDE
                     with warnings.catch_warnings():

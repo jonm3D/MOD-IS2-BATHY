@@ -17,8 +17,7 @@ import geopandas as gpd
 import rasterio
 
 
-def create_dswx_mosaic(input_dir, output_path, bbox_path=None, pattern="*BWTR.tif", 
-                       clip_output=None, keep_temp_files=False):
+def create_dswx_mosaic(input_dir, output_path, bbox_path=None):
     """
     Create a merged mosaic from DSWx-HLS data.
     
@@ -30,12 +29,6 @@ def create_dswx_mosaic(input_dir, output_path, bbox_path=None, pattern="*BWTR.ti
         Path where the output mosaic will be saved
     bbox_path : str, optional
         Path to GeoJSON file containing the bounding box to clip to
-    pattern : str, optional
-        Glob pattern to select files (default: "*BWTR.tif")
-    clip_output : str, optional
-        Path where the clipped output will be saved (if None, no clipping is performed)
-    keep_temp_files : bool, optional
-        Whether to keep temporary files (default: False)
     
     Returns:
     --------
@@ -43,6 +36,7 @@ def create_dswx_mosaic(input_dir, output_path, bbox_path=None, pattern="*BWTR.ti
         Dictionary containing paths to the created files
     """
     # Get list of files
+    pattern = "*BWTR.tif"
     files = glob.glob(os.path.join(input_dir, pattern))
     if not files:
         raise FileNotFoundError(f"No files matching '{pattern}' found in {input_dir}")
@@ -94,9 +88,11 @@ def create_dswx_mosaic(input_dir, output_path, bbox_path=None, pattern="*BWTR.ti
     results = {'merged': output_path}
     
     # Clip to bounding box if provided
-    if bbox_path and clip_output:
+    if bbox_path:
+        # Create a default clip output filename
+        clip_output = output_path.replace('.tif', '_clipped.tif')
+        
         print(f"Clipping to bounding box from {bbox_path}...")
-        os.makedirs(os.path.dirname(clip_output), exist_ok=True)
         
         # Read bbox
         bbox = gpd.read_file(bbox_path).to_crs(merged.rio.crs).geometry
@@ -119,7 +115,7 @@ def create_dswx_mosaic(input_dir, output_path, bbox_path=None, pattern="*BWTR.ti
         results['clipped'] = clip_output
     
     # Clean up temp file
-    if not keep_temp_files and os.path.exists(tmp_path):
+    if os.path.exists(tmp_path):
         os.remove(tmp_path)
     
     return results
@@ -130,12 +126,6 @@ def main():
     parser.add_argument('input_dir', help='Directory containing DSWx-HLS data')
     parser.add_argument('output_path', help='Path where the output mosaic will be saved (file or directory)')
     parser.add_argument('--bbox', '-b', dest='bbox_path', help='Path to GeoJSON file for clipping')
-    parser.add_argument('--pattern', '-p', dest='pattern', default='*BWTR.tif',
-                        help='Glob pattern to select files (default: "*BWTR.tif")')
-    parser.add_argument('--clip-output', '-c', dest='clip_output',
-                        help='Path where the clipped output will be saved')
-    parser.add_argument('--keep-temp', '-k', dest='keep_temp_files', action='store_true',
-                        help='Keep temporary files')
     
     args = parser.parse_args()
     
@@ -148,20 +138,10 @@ def main():
             output_path = os.path.join(output_path, f"{input_name}_merged.tif")
             print(f"Output path is a directory. Using filename: {output_path}")
         
-        # Handle the case where clip_output is needed but not provided
-        clip_output = args.clip_output
-        if args.bbox_path and not clip_output:
-            # Create a default clip output filename
-            clip_output = output_path.replace('.tif', '_clipped.tif')
-            print(f"Bbox provided but no clip output path. Using: {clip_output}")
-        
         results = create_dswx_mosaic(
             args.input_dir,
             output_path,
-            args.bbox_path,
-            args.pattern,
-            clip_output,
-            args.keep_temp_files
+            args.bbox_path
         )
         
         print("\nProcessing complete!")

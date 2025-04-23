@@ -284,7 +284,7 @@ def main():
             bathy_gdfs = []
             summary_data = []
             
-            for parquet_file in tqdm(parquet_files, desc="Processing outputs"):
+            for parquet_file in tqdm(parquet_files, desc="Writing results"):
                 filename = os.path.basename(parquet_file)
                 profile_id = filename.replace('.parquet', '')
                 
@@ -323,7 +323,7 @@ def main():
             
             # Save summary CSV
             summary_df = pd.DataFrame(summary_data)
-            summary_path = os.path.join(output_dir, "profile_summary.csv")
+            summary_path = os.path.join(output_dir, "summary.csv")
             summary_df.to_csv(summary_path, index=False)
             
             # Create and save combined bathymetry data if any exists

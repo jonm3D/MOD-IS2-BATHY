@@ -98,7 +98,7 @@ def simple_surface_model(chunk, grid_points=1000, kde_method='silverman', min_da
         return noise_result
 
     # Require at least 10 points with atl03_cnf >= 3
-    if np.sum(atl03_cnf >= 3) < 10:
+    if np.sum(atl03_cnf >= 2) < 10:
         logger.info(f"Insufficient points with atl03_cnf >= 3: {np.sum(atl03_cnf >= 3)} < 10")
         return empty_result
     
@@ -111,10 +111,13 @@ def simple_surface_model(chunk, grid_points=1000, kde_method='silverman', min_da
         padding = (z_max - z_min) * 0.1
         grid_min = z_min - padding
         grid_max = z_max + padding
+
+        # use only med or better confidence points for the surface estimation step
+        z_chunk_high_confidence = z_chunk[atl03_cnf >= 2]
         
         # Use custom_kde for density estimation
         grid, density, bw, success, method_used = custom_kde(
-            z_chunk, 
+            z_chunk_high_confidence, 
             method=kde_method,
             grid_points=grid_points,
             grid_min=grid_min,
