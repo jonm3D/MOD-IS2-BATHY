@@ -46,8 +46,8 @@ class SlideRuleDataLoader(BaseDataLoader):
         parquet_path=None,
     ):
         with lock:
-            region = sliderule.toregion(region)
-        print(parquet_path)
+            region = sliderule.toregion(region.loc[:, ['geometry']])
+        # print(parquet_path)
 
         params = {
             "poly": region["poly"],

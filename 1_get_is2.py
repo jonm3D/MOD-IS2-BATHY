@@ -24,24 +24,24 @@ from utils.oo import sliderule_data_loader
 # Configuration for all parameters
 CONFIG = {
     # Required paths
-    "aoi": "local/Oahu/Oahu.geojson",  # Path to the AOI geojson file
-    "water_mask": "local/Oahu/DSWx/OPERA_L3_DSWX-HLS_V1_1.0-OAHU_merged_clipped.tif",  # Path to the water mask GeoTIFF
-    "output_dir": "local/Oahu/ICESat2",  # Directory to store output files
-    
+    "aoi": "/Volumes/T7/Duck_SDB/duck.geojson",  # Path to the AOI GeoJSON
+    "water_mask": "/Volumes/T7/Duck_SDB/DSWx-HLS/mosaics/duck_water_mosaic_2024-06-01_2025-06-01.tif",  # Path to the water mask GeoTIFF
+    "output_dir": "/Volumes/T7/Duck_SDB/ICESat2",  # Directory to store output files
+
     # Optional parameters
-    "request_name": None,  # Name for this request (defaults to AOI filename if not provided)
+    "request_name": "Duck",  # Name for this request (defaults to AOI filename if not provided)
     "aoi_title": None,  # Title string for the AOI (default: same as request name)
     
     # ICESat-2 query parameters
-    "start_date": "2023-01-01", # ICESat-2 launch : Sept 2018
-    "end_date": "2024-01-01",
+    "start_date": "2019-01-01", # ICESat-2 launch : Sept 2018
+    "end_date": "2025-06-01",
     "min_confidence": 0,  # minimum signal_conf value
     "max_samples": int(1e5),  # max points to show in overhead view
     
     # Processing parameters
-    "chunk_size": 5,  # chunk size in km
+    "chunk_size": 2,  # chunk size in km
     "buffer_percent": 0,  # buffer percentage for chunks
-    "max_workers": 8,  # maximum number of concurrent workers
+    "max_workers": 4,  # maximum number of concurrent workers
     
     # Filtering parameters
     "min_elevation": -100,  # minimum photon elevation to include
@@ -224,6 +224,9 @@ def process_icesat2_data(run_timestamp):
     
     # Load and format the AOI dataframe
     aoi = gpd.read_file(CONFIG["aoi"])
+    # Drop FID column if it exists
+    if 'FID' in aoi.columns:
+        aoi = aoi.drop(columns=['FID'])
     aoi["start_date"] = pd.Timestamp(CONFIG["start_date"])
     aoi["end_date"] = pd.Timestamp(CONFIG["end_date"])
     aoi["request_name"] = CONFIG["request_name"]
@@ -282,7 +285,7 @@ def process_icesat2_data(run_timestamp):
         
         try:
             # Create a separate loader instance for thread safety
-            chunk_loader = sliderule_data_loader.SlideRuleDataLoader(verbose=False)
+            chunk_loader = sliderule_data_loader.SlideRuleDataLoader(verbose=True)
             
             # Load data for this chunk
             chunk_data = chunk_loader.load_data(
@@ -335,6 +338,15 @@ def process_icesat2_data(run_timestamp):
                     chunk_paths.append(chunk_path)
             except Exception as e:
                 print(f"Chunk {aoi_chunks.iloc[chunk_idx]['chunk_id']} generated an exception: {e}")
+
+
+    # # Serial processing for debugging
+    # chunk_paths = []
+    # for idx in range(len(aoi_chunks)):
+    #     chunk_path = process_chunk(idx)
+    #     if chunk_path:
+    #         chunk_paths.append(chunk_path)
+
     
     # Now merge all the chunk files
     print(f"Merging {len(chunk_paths)} chunk datasets")

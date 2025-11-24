@@ -2,20 +2,22 @@
 request_name: "Oahu"  # name of the request
 
 # Input/Output Settings
-input_file: "example/Oahu/ICESat2/Oahu_icesat2_atl03.parquet" # Can be set to a default input file path
-output_dir: "example/Oahu/classification_outputs"  # Can be set to a default output directory path
+input_file: "/Volumes/T7/Hawaii_Site_Assessments/ICESat2/Oahu/Oahu_20250606_141419/Oahu_icesat2_atl03.parquet"
+output_dir: "/Volumes/T7/MOD-IS2-BATHY/debug_refraction/cls"
+load_from_chunks: true # for large datasets, avoid loading the entire dataset into memory at once
 
 # Processing Options
 make_plots: 1  # for html visual output
 debug: false  # Enables plots for surface and non-surface processing (slow)
-serial: false  # Run processing in serial mode (helpful for debugging)
+serial: true  # Run processing in serial mode (helpful for debugging)
 n_nodes: 6  # for parallel processing
 
 # Filtering Options
-rgt: null  # Process only profiles with specific reference ground track (null to run all)
-cc: null  # Process only profiles with specific ICESat-2 cycle (null to run all)
-spot: null # Process only profiles with specific ICESat-2 spot (null to run all)
+rgt: 1158  # Process only profiles with specific reference ground track (null to run all)
+cc: 3  # Process only profiles with specific ICESat-2 cycle (null to run all)
+spot: 3 # Process only profiles with specific ICESat-2 spot (null to run all)
 profile_limit: null  # Limit of X number of profiles to process (null to run all)
+etopo_15s_path: /Volumes/T7/ETOPO/All_ETOPO2022_15s_IceSurf.tif
 
 ################################################
 # Along-track Binning Parameters
@@ -28,9 +30,9 @@ n_ph_surface_bins: 10000 # only used if method = 'n'
 x_m_surface_bins: 100 # only used if method = 'x'
 
 ## Non-Surface (Atmo+Bathy) Binning
-overlap_nonsurf: 0.9
+overlap_nonsurf: 0.8
 method_nonsurf_bins: "n"  # 'x' or 'n'
-n_ph_nonsurf_bins: 100
+n_ph_nonsurf_bins: 250
 x_m_nonsurf_bins: 50
 
 ################################################

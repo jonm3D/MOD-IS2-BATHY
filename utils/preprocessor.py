@@ -1,6 +1,7 @@
 import pandas as pd
 
 
+
 class Preprocessor:
     def __init__(self, data):
         """
@@ -23,7 +24,9 @@ class Preprocessor:
         separated_beams = {}
         for key, group in beam_groups:
             group = group.copy()
-            group["x_ph"] = group["x_ph"] - group["x_ph"].min()
+            if 'x_ph' in group.columns:
+                group["x_ph"] = group["x_ph"] - group["x_ph"].min()
+
             separated_beams[key] = group
         return separated_beams
 

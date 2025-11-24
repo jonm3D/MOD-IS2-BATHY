@@ -77,6 +77,10 @@ def process_single_profile(profile_key, data, config, output_dir, debug_dir, deb
             'debug_dir': profile_debug_dir,
             'serial': config.get('serial', False)
         })
+
+        if config['load_from_chunks']:
+            # get the unique chunk IDs in the data
+            pass
         
         # Call process_profile with the data and expanded config dict
         results = process_profile(data, **processing_kwargs)
@@ -174,6 +178,7 @@ def main():
     try:
         # Load input data
         logger.info("Loading input data")
+
         input_data = gpd.read_parquet(input_file)
         input_data.time = pd.to_datetime(input_data.time)
         
