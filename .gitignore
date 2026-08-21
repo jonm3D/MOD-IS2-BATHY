@@ -1,6 +1,10 @@
 local/*
 *.parquet
 
+# Local delivery packages and exports
+/indopacom_delivery_2/
+/indopacom_delivery_2*.zip
+
 # MacOS
 .DS_Store
 ._*
@@ -171,3 +175,6 @@ cython_debug/
 #.idea/
 
 .vscode/*
+
+# Generated refraction-debug products; notebooks remain tracked separately
+/debug_refraction/cls/
